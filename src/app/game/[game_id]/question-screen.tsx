@@ -5,27 +5,36 @@ import { Button } from "@/components/base/buttons/button";
 import { Input } from "@/components/base/input/input";
 import useChannel from "@/hooks/use-channel";
 
-export const QuestionScreen = ({ channel, game }) => {
-    const [currentQuestion, setCurrentQuestion] = useState();
-    const [currentAnswer, setCurrentAnswer] = useState();
+export const QuestionScreen = ({ channel, game, team }) => {
+    const [currentAnswer, setCurrentAnswer] = useState("");
 
-    const submitAnswer = () => {
-        channel.push("guess", { answer: currentAnswer });
+    const handleChange = (value) => {
+        setCurrentAnswer(value.toUpperCase());
+    };
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        channel.push("guess", { answer: currentAnswer.trim() });
+        setCurrentAnswer("");
     };
 
-    const nextQuestion = () => {
-        channel.push("next_question", {});
-    };
+    const teamGuesses = game.teamGuesses[team];
+    const { answer } = (teamGuesses && teamGuesses[game.currentQuestion]) || {};
+    const isAnswered = !!answer;
 
     return (
         <>
             <h1 className="mb-4 text-center text-display-sm font-semibold text-primary">{game.currentQuestion}</h1>
 
-            <Input placeholder="Type your answer" onChange={setCurrentAnswer} className="mb-4" />
-            <Button onClick={submitAnswer} className="mb-4">
-                Submit
-            </Button>
-            <Button onClick={nextQuestion}>Next question</Button>
+            {answer && <p>Your answer: {answer}</p>}
+
+            {!answer && (
+                <form onSubmit={handleSubmit} className="w-full">
+                    <Input placeholder="Type your answer" onChange={handleChange} value={currentAnswer} className="mb-4" isDisabled={isAnswered} />
+                    <Button type="submit" className="mb-4 w-full" isDisabled={isAnswered}>
+                        Submit
+                    </Button>
+                </form>
+            )}
         </>
     );
 };

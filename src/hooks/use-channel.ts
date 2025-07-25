@@ -5,6 +5,7 @@ import { Channel, Socket } from "phoenix";
 export type GameType = {
     currentQuestion: string;
     state: "initialized" | "game_started";
+    teamGuesses: any;
     leaderboard: Array<LeaderboardRowType>;
 };
 export type LeaderboardRowType = {
@@ -29,6 +30,7 @@ function useChannel({ room, params, onGameUpdated }: Props) {
         const game: GameType = {
             state: payload.game.state,
             currentQuestion: payload.game.current_question,
+            teamGuesses: payload.game.team_guesses,
             leaderboard: leaderboard,
         };
         onGameUpdated(game);
@@ -36,11 +38,7 @@ function useChannel({ room, params, onGameUpdated }: Props) {
 
     useEffect(() => {
         if (room) {
-            //Set url instead of hard coding
-            const socket = new Socket(
-                // `${process.env.NEXT_PUBLIC_PUSH_SERVICE_URL}/socket`,
-                "ws://localhost:4000/socket",
-            );
+            const socket = new Socket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`);
 
             socket.connect();
             const channel = socket.channel(room, params);
