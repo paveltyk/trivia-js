@@ -25,6 +25,8 @@ const GameAdminPage = () => {
         channel.push("next_question", {});
     };
 
+    const lobbyUrl = `${window.location.origin}/game/${params.game_id}/lobby`;
+
     return (
         <>
             <div className="m-auto flex h-dvh max-w-3xl flex-col">
@@ -33,6 +35,12 @@ const GameAdminPage = () => {
                     <p>Game state: {game?.state}</p>
                     <p>Teams: {game?.leaderboard.map(({ team }) => team).join(", ")}</p>
                     <p>Current question: {game?.currentQuestion}</p>
+                    <p className="mb-4">
+                        Join URL:{" "}
+                        <a href={lobbyUrl} target="blank" className="text-brand-700">
+                            {lobbyUrl}
+                        </a>
+                    </p>
                     {game?.state === "initialized" && <Button onClick={startGame}>Start game</Button>}
                     {game?.state === "game_started" && <Button onClick={nextQuestion}>Next question</Button>}
                 </div>

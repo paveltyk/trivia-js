@@ -23,12 +23,12 @@ const GamePage = () => {
     });
 
     return (
-        <div className="m-auto flex h-dvh max-w-3xl flex-col">
+        <div className="m-auto flex h-dvh max-w-xl flex-col">
             <div>
                 <p>Team: {team}</p>
                 <p>Connection: {connected ? "Connected" : "Disconnected"}</p>
             </div>
-            <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 md:px-8">
+            <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
                 {game?.state === "initialized" && <StartScreen channel={channel} game={game} />}
                 {game?.state === "game_started" && <QuestionScreen channel={channel} game={game} team={team} />}
                 {game?.state === "game_over" && <GameoverScreen channel={channel} game={game} />}
