@@ -19,7 +19,7 @@ export type LeaderboardRowType = {
 interface Props {
     room?: string | null;
     params?: { [key: string]: any };
-    onGameUpdated(game: GameType): void;
+    onGameUpdated?(game: GameType): void;
 }
 
 function useChannel({ room, params, onGameUpdated }: Props) {
