@@ -8,7 +8,7 @@ import { Input } from "@/components/base/input/input";
 const GameLobyPage = () => {
     const router = useRouter();
     const params = useParams<{ game_id: string }>();
-    const [team, setTeam] = useState();
+    const [team, setTeam] = useState<string | undefined>();
     const submitTeam = () => {
         router.push(`/game/${params.game_id}?team=${team}`);
     };

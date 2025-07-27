@@ -42,7 +42,7 @@ interface QRCodeProps {
      *
      * @default "md"
      */
-    size?: "md" | "lg";
+    size?: "md" | "lg" | "2xl" | "3xl";
     /**
      * The class name to apply to the QR code.
      */

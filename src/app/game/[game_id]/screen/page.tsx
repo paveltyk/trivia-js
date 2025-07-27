@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/base/buttons/button";
 import { QRCode } from "@/components/shared-assets/qr-code";
 import useChannel from "@/hooks/use-channel";
+import type { GameType } from "@/hooks/use-channel";
 
 const JoinScreen = ({ game, gameId }) => {
-    const gameUrl = `http://192.168.0.106:3000/game/${gameId}/lobby`;
+    const [gameUrl, setGameUrl] = useState("");
+
+    useEffect(() => {
+        setGameUrl(`${window.location.origin}/game/${gameId}/lobby`);
+    }, []);
 
     return (
         <>
@@ -54,7 +59,7 @@ const LeaderboardScreen = ({ game }) => {
 
 const GameScreenPage = () => {
     const params = useParams<{ game_id: string }>();
-    const [game, setGame] = useState();
+    const [game, setGame] = useState<GameType | undefined>();
 
     const { connected, channel } = useChannel({
         room: `game:${params.game_id}`,

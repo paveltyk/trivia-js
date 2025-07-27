@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/base/buttons/button";
 import useChannel from "@/hooks/use-channel";
+import type { GameType } from "@/hooks/use-channel";
 
 const GameAdminPage = () => {
-    const [game, setGame] = useState();
+    const [game, setGame] = useState<GameType | undefined>();
+    const [origin, setOrigin] = useState("");
     const params = useParams<{ game_id: string }>();
+
+    useEffect(() => {
+        setOrigin(window.location.origin);
+    }, []);
 
     const { connected, channel } = useChannel({
         room: `game:${params.game_id}`,
@@ -25,7 +31,7 @@ const GameAdminPage = () => {
         channel.push("next_question", {});
     };
 
-    const lobbyUrl = `${window.location.origin}/game/${params.game_id}/lobby`;
+    const lobbyUrl = `${origin}/game/${params.game_id}/lobby`;
 
     return (
         <>

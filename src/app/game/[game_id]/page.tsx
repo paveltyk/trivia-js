@@ -9,7 +9,7 @@ import { QuestionScreen } from "./question-screen.tsx";
 import { StartScreen } from "./start-screen.tsx";
 
 const GamePage = () => {
-    const [game, setGame] = useState();
+    const [game, setGame] = useState<GameType | undefined>();
     const params = useParams<{ game_id: string }>();
     const searchParams = useSearchParams();
     const team = searchParams.get("team") || "Guest";

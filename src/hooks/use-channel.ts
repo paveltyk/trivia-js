@@ -4,13 +4,16 @@ import { Channel, Socket } from "phoenix";
 
 export type GameType = {
     currentQuestion: string;
-    state: "initialized" | "game_started";
+    state: "initialized" | "game_started" | "game_over";
     teamGuesses: any;
     leaderboard: Array<LeaderboardRowType>;
 };
+
+export type LeaderboardType = Array<LeaderboardRowType>;
+
 export type LeaderboardRowType = {
     team: string;
-    score: integer;
+    score: number;
 };
 
 interface Props {
@@ -38,7 +41,8 @@ function useChannel({ room, params, onGameUpdated }: Props) {
 
     useEffect(() => {
         if (room) {
-            const socket = new Socket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`);
+            const websocketUrl = `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`;
+            const socket = new Socket(websocketUrl);
 
             socket.connect();
             const channel = socket.channel(room, params);
