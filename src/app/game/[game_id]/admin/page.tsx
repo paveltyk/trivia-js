@@ -32,6 +32,7 @@ const GameAdminPage = () => {
     };
 
     const lobbyUrl = `${origin}/game/${params.game_id}/lobby`;
+    const screenUrl = `${origin}/game/${params.game_id}/screen`;
 
     return (
         <>
@@ -41,10 +42,16 @@ const GameAdminPage = () => {
                     <p>Game state: {game?.state}</p>
                     <p>Teams: {game?.leaderboard.map(({ team }) => team).join(", ")}</p>
                     <p>Current question: {game?.currentQuestion}</p>
-                    <p className="mb-4">
+                    <p>
                         Join URL:{" "}
                         <a href={lobbyUrl} target="blank" className="text-brand-700">
                             {lobbyUrl}
+                        </a>
+                    </p>
+                    <p className="mb-4">
+                        Screen URL:{" "}
+                        <a href={screenUrl} target="blank" className="text-brand-700">
+                            {screenUrl}
                         </a>
                     </p>
                     {game?.state === "initialized" && <Button onClick={startGame}>Start game</Button>}

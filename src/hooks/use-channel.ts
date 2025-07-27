@@ -36,7 +36,7 @@ function useChannel({ room, params, onGameUpdated }: Props) {
             teamGuesses: payload.game.team_guesses,
             leaderboard: leaderboard,
         };
-        onGameUpdated(game);
+        onGameUpdated && onGameUpdated(game);
     };
 
     useEffect(() => {
