@@ -3,11 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash01 } from "@untitledui/icons";
 import { useRouter } from "next/navigation";
-import { Table, TableCard, TableRowActionsDropdown } from "@/components/application/table/table";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { Input } from "@/components/base/input/input";
-import useChannel from "@/hooks/use-channel";
 
 type QuestionItemType = {
     id: string;
@@ -25,69 +24,70 @@ const QuizQuestionRow = ({ item, onAddItem, onRemoveItem }) => {
     }, [question, answer]);
 
     return (
-        <Table.Row id={item.id}>
-            <Table.Cell>
-                <Input placeholder="Type question here" size="md" value={question} onChange={setQuestion} />
-            </Table.Cell>
-            <Table.Cell>
-                <Input placeholder="Type answer here" size="md" value={answer} onChange={setAnswer} className="w-100" />
-            </Table.Cell>
-            <Table.Cell className="px-4">
-                <div className="flex justify-end gap-0.5">
-                    <ButtonUtility size="xs" color="tertiary" tooltip="Add question" icon={Plus} onClick={() => onAddItem(item)} />
-                    <ButtonUtility size="xs" color="tertiary" tooltip="Delete question" icon={Trash01} onClick={() => onRemoveItem(item)} />
-                </div>
-            </Table.Cell>
-        </Table.Row>
+        <div className="mb-4 flex gap-4">
+            <Input placeholder="Type question here" size="md" value={question} onChange={setQuestion} />
+            <Input
+                placeholder="Type answer here"
+                size="md"
+                value={answer}
+                onChange={setAnswer}
+                onKeyDown={({ code }) => {
+                    if (code === "Enter" && question && answer) {
+                        onAddItem(item);
+                    }
+                }}
+                className="w-100"
+            />
+            <Dropdown.Root>
+                <Dropdown.DotsButton />
+
+                <Dropdown.Popover className="w-min">
+                    <Dropdown.Menu>
+                        <Dropdown.Item icon={Plus} onAction={() => onAddItem(item)}>
+                            <span className="pr-4">Add question</span>
+                        </Dropdown.Item>
+                        <Dropdown.Item icon={Trash01} onAction={() => onRemoveItem(item)}>
+                            <span className="pr-4">Delete question</span>
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown.Popover>
+            </Dropdown.Root>
+        </div>
     );
 };
 
 const QuizTable = ({ items, onCreateGame, onAddItem, onRemoveItem }: { items: QuestionItemType[]; onCreateGame: any; onAddItem: any; onRemoveItem: any }) => {
     return (
-        <TableCard.Root>
-            <TableCard.Header
-                title="Trivia questions"
-                contentTrailing={
-                    <div className="flex items-center gap-3">
-                        <Button
-                            size="md"
-                            iconLeading={Plus}
-                            onClick={() => {
-                                onCreateGame(items);
-                            }}
-                        >
-                            Create game
-                        </Button>
-                    </div>
-                }
-            />
-            <Table aria-label="Trivia questions">
-                <Table.Header>
-                    <Table.Head id="question" label="Question" isRowHeader className="w-full" />
-                    <Table.Head id="answer" label="Answer" isRowHeader />
-                    <Table.Head id="actions" />
-                </Table.Header>
-
-                <Table.Body items={items}>
-                    {(item) => <QuizQuestionRow item={item} key={item.id} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />}
-                </Table.Body>
-            </Table>
-        </TableCard.Root>
+        <>
+            <div>
+                <Button onClick={onCreateGame}>Create game</Button>
+            </div>
+            {items.map((item) => (
+                <QuizQuestionRow item={item} key={item.id} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />
+            ))}
+        </>
     );
 };
 
 const NewGamePage = () => {
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
+
     const router = useRouter();
     const [items, setItems] = useState([{ id: "506c64a1-9a49-422d-bba6-55964d0e8c01", question: "", answer: "" }]);
 
-    const { connected, channel } = useChannel({
-        room: `game:lobby`,
-        params: { admin: true },
-    });
+    const onCreateGame = () => {
+        const props = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ questions: items }),
+        };
 
-    const startGame = () => {
-        channel.push("start_game");
+        fetch(`${apiUrl}/game`, props)
+            .then((res) => res.json())
+            .then(({ game_id }) => router.push(`/game/${game_id}/admin`))
+            .catch((err) => console.error("Error", err));
     };
+
     const onAddItem = (item) => {
         setItems((prevItems) => {
             const idx = prevItems.indexOf(item);
@@ -116,12 +116,6 @@ const NewGamePage = () => {
             } else {
                 return [{ id: crypto.randomUUID(), question: "", answer: "" }];
             }
-        });
-    };
-
-    const onCreateGame = () => {
-        channel.push("create_game", { questions: items }).receive("ok", ({ game_id }) => {
-            router.push(`/game/${game_id}/admin`);
         });
     };
 
