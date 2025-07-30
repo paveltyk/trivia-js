@@ -56,12 +56,9 @@ const QuizQuestionRow = ({ item, onAddItem, onRemoveItem }) => {
     );
 };
 
-const QuizTable = ({ items, onCreateGame, onAddItem, onRemoveItem }: { items: QuestionItemType[]; onCreateGame: any; onAddItem: any; onRemoveItem: any }) => {
+const QuizTable = ({ items, onAddItem, onRemoveItem }: { items: QuestionItemType[]; onAddItem: any; onRemoveItem: any }) => {
     return (
         <>
-            <div>
-                <Button onClick={onCreateGame}>Create game</Button>
-            </div>
             {items.map((item) => (
                 <QuizQuestionRow item={item} key={item.id} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />
             ))}
@@ -122,7 +119,11 @@ const NewGamePage = () => {
     return (
         <>
             <div className="container mx-auto p-4">
-                <QuizTable items={items} onCreateGame={onCreateGame} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />
+                <h1 className="mb-8 border-b-1 border-secondary pb-2 text-display-sm font-semibold text-primary">New game</h1>
+                <QuizTable items={items} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />
+                <div className="mt-8 border-t-1 border-secondary pt-4">
+                    <Button onClick={onCreateGame}>Create game</Button>
+                </div>
             </div>
         </>
     );
