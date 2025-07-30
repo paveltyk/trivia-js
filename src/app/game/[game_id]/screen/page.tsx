@@ -35,7 +35,7 @@ const JoinScreen = ({ game, gameId }) => {
 const QuestionScreen = ({ game }) => {
     return (
         <>
-            <h1 className="mb-4 text-center text-display-sm font-semibold text-primary">{game.currentQuestion}</h1>
+            <h1 className="mb-4 text-center text-display-sm font-semibold text-primary">{game.currentQuestion.question}</h1>
         </>
     );
 };

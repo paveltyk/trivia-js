@@ -2,8 +2,15 @@
 import { useEffect, useState } from "react";
 import { Channel, Socket } from "phoenix";
 
+export type GameQuestionType = {
+    id: string;
+    question: string;
+    answer: string;
+};
+
 export type GameType = {
-    currentQuestion: string;
+    questions: GameQuestionType[];
+    currentQuestion: GameQuestionType;
     state: "initialized" | "game_started" | "game_over";
     teamGuesses: any;
     leaderboard: Array<LeaderboardRowType>;
@@ -32,6 +39,7 @@ function useChannel({ room, params, onGameUpdated }: Props) {
         });
         const game: GameType = {
             state: payload.game.state,
+            questions: payload.game.questions,
             currentQuestion: payload.game.current_question,
             teamGuesses: payload.game.team_guesses,
             leaderboard: leaderboard,

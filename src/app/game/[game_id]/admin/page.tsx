@@ -41,7 +41,7 @@ const GameAdminPage = () => {
                     <h1 className="mb-4 text-center text-display-sm font-semibold text-primary">Admin</h1>
                     <p>Game state: {game?.state}</p>
                     <p>Teams: {game?.leaderboard.map(({ team }) => team).join(", ")}</p>
-                    <p>Current question: {game?.currentQuestion}</p>
+                    <p>Current question: {game?.currentQuestion?.question}</p>
                     <p>
                         Join URL:{" "}
                         <a href={lobbyUrl} target="blank" className="text-brand-700">
