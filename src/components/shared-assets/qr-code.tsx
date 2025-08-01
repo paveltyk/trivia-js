@@ -42,14 +42,16 @@ interface QRCodeProps {
      *
      * @default "md"
      */
-    size?: "md" | "lg" | "2xl" | "3xl";
+    size?: "md" | "lg" | "2xl" | "3xl" | number;
     /**
      * The class name to apply to the QR code.
      */
     className?: string;
+
+    frame?: boolean;
 }
 
-export const QRCode = ({ size = "md", value, options, className }: QRCodeProps) => {
+export const QRCode = ({ size = "md", value, options, className, frame }: QRCodeProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [qrCode, setQrCode] = useState<QRCodeStyling | null>(null);
 
@@ -57,8 +59,8 @@ export const QRCode = ({ size = "md", value, options, className }: QRCodeProps) 
         if (!ref.current) return;
 
         const qrCode = new QRCodeStyling({
-            width: styles[size].qr.width,
-            height: styles[size].qr.height,
+            width: (styles[size] && styles[size].qr.width) || size,
+            height: (styles[size] && styles[size].qr.height) || size,
             data: value,
             type: "svg",
             ...options,
@@ -75,13 +77,17 @@ export const QRCode = ({ size = "md", value, options, className }: QRCodeProps) 
     }, [qrCode, value, options]);
 
     return (
-        <div className={cx("relative flex items-center justify-center", styles[size].root, className)}>
+        <div className={cx("relative flex items-center justify-center", frame ? styles[size].root : "", className)}>
             <div ref={ref} />
 
-            <QRCodeFrameHandle className="absolute top-0 left-0" />
-            <QRCodeFrameHandle className="absolute top-0 right-0 rotate-90" />
-            <QRCodeFrameHandle className="absolute right-0 bottom-0 rotate-180" />
-            <QRCodeFrameHandle className="absolute bottom-0 left-0 -rotate-90" />
+            {frame && (
+                <>
+                    <QRCodeFrameHandle className="absolute top-0 left-0" />
+                    <QRCodeFrameHandle className="absolute top-0 right-0 rotate-90" />
+                    <QRCodeFrameHandle className="absolute right-0 bottom-0 rotate-180" />
+                    <QRCodeFrameHandle className="absolute bottom-0 left-0 -rotate-90" />
+                </>
+            )}
         </div>
     );
 };

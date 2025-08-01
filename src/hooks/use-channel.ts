@@ -13,6 +13,7 @@ export type GameType = {
     currentQuestion: GameQuestionType;
     state: "initialized" | "game_started" | "game_over";
     teamGuesses: any;
+    teams: string[];
     leaderboard: Array<LeaderboardRowType>;
 };
 
@@ -42,6 +43,7 @@ function useChannel({ room, params, onGameUpdated }: Props) {
             questions: payload.game.questions,
             currentQuestion: payload.game.current_question,
             teamGuesses: payload.game.team_guesses,
+            teams: payload.game.teams,
             leaderboard: leaderboard,
         };
         onGameUpdated && onGameUpdated(game);

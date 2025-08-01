@@ -30,7 +30,7 @@ const GamePage = () => {
                 <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
                     {game?.state === "initialized" && <StartScreen channel={channel} game={game} />}
                     {game?.state === "game_started" && <QuestionScreen channel={channel} game={game} team={team} />}
-                    {game?.state === "game_over" && <GameoverScreen channel={channel} game={game} />}
+                    {game?.state === "game_over" && <GameoverScreen game={game} />}
                 </div>
             </div>
             <div className="absolute right-0 bottom-0">

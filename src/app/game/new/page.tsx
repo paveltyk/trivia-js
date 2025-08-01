@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash01 } from "@untitledui/icons";
 import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
@@ -91,7 +92,7 @@ const NewGamePage = () => {
             const newItems = [...prevItems];
 
             if (idx !== -1) {
-                const newItem = { id: crypto.randomUUID(), question: "", answer: "" };
+                const newItem = { id: uuidv4(), question: "", answer: "" };
                 newItems.splice(idx + 1, 0, newItem);
             }
 

@@ -133,7 +133,7 @@ export const RatingBadge = ({ title = "Best Design Tool", subtitle = "2,000+ rev
                 <RatingStars rating={rating} className="gap-0.5" starClassName="size-4" />
 
                 <div className="text-center">
-                    <p className={cx("text-sm font-semibold", theme === "light" ? "text-primary_on-brand" : "text-primary")}>{title}</p>
+                    <p className={cx("text-md font-semibold", theme === "light" ? "text-primary_on-brand" : "text-primary")}>{title}</p>
                     <p className={cx("text-xs font-medium", theme === "light" ? "text-secondary_on-brand" : "text-secondary")}>{subtitle}</p>
                 </div>
             </div>

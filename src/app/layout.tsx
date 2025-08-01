@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={cx(inter.variable, "bg-primary antialiased")}>
+            <body className={cx(inter.variable, "bg-tertiary antialiased")}>
                 <RouteProvider>
                     <Theme>{children}</Theme>
                 </RouteProvider>
