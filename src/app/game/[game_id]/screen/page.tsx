@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { Card } from "@/app/game/[game_id]/admin/card";
 import { LeaderboardCard, LeaderboardCardEmpty } from "@/app/game/[game_id]/admin/leaderboard-card";
 import { TeamAvatar, TeamsCard } from "@/app/game/[game_id]/admin/teams-card";
+import { QuestionBullet } from "@/app/game/[game_id]/question-screen";
 import { Button } from "@/components/base/buttons/button";
 import { QRCode } from "@/components/shared-assets/qr-code";
 import useChannel from "@/hooks/use-channel";
@@ -96,7 +97,12 @@ const JoinScreen = ({ game, gameId }) => {
 const QuestionScreen = ({ game }) => {
     return (
         <>
-            <h1 className="mb-4 text-center text-display-sm font-semibold text-primary">{game.currentQuestion.question}</h1>
+            <div className="m-auto flex h-dvh max-w-3xl flex-col">
+                <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
+                    <QuestionBullet number={1} className="mb-9" />
+                    <h1 className="mb-4 text-display-md font-semibold text-primary">{game.currentQuestion.question}</h1>
+                </div>
+            </div>
         </>
     );
 };
@@ -104,16 +110,12 @@ const QuestionScreen = ({ game }) => {
 const LeaderboardScreen = ({ game }) => {
     return (
         <>
-            <h1 className="mb-4 text-center text-display-sm text-primary">Score:</h1>
-            <ol className="list-decimal">
-                {game.leaderboard.map((row) => {
-                    return (
-                        <li key={row.team}>
-                            <b>{row.team}</b> - {row.score}
-                        </li>
-                    );
-                })}
-            </ol>
+            <div className="m-auto flex h-dvh max-w-3xl flex-col">
+                <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
+                    {game?.leaderboard.length > 0 && <LeaderboardCard game={game} />}
+                    {game?.leaderboard.length === 0 && <LeaderboardCardEmpty />}
+                </div>
+            </div>
         </>
     );
 };
@@ -134,8 +136,7 @@ const GameScreenPage = () => {
         <>
             {game?.state === "initialized" && <JoinScreen game={game} gameId={params.game_id} />}
             {game?.state === "game_started" && <QuestionScreen game={game} />}
-            {game?.state === "game_over" && game?.leaderboard.length > 0 && <LeaderboardCard game={game} />}
-            {game?.state === "game_over" && game?.leaderboard.length === 0 && <LeaderboardCardEmpty />}
+            {game?.state === "game_over" && <LeaderboardScreen game={game} />}
         </>
     );
 };
