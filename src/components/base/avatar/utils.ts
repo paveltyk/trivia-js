@@ -7,7 +7,7 @@
  *          it returns the first character of each word.
  */
 export const getInitials = (name: string) => {
-    const [firstName, lastName] = name.replaceAll(" and ", " ").split(" ");
+    const [firstName, lastName] = name.replaceAll(" and ", " ").replaceAll(" the ", " ").split(" ");
     const initials = firstName.charAt(0) + (lastName ? lastName.charAt(0) : "");
     return initials.toUpperCase();
 };

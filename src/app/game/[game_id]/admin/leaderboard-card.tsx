@@ -1,9 +1,30 @@
+import { Trophy01 } from "@untitledui/icons";
 import { Card } from "@/app/game/[game_id]/admin/card";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { RatingBadge } from "@/components/foundations/rating-badge";
 import { BackgroundPattern } from "@/components/shared-assets/background-patterns";
 import { cx } from "@/utils/cx";
 
-const LeaderboardCard = ({ game }) => {
+export const LeaderboardCardEmpty = () => {
+    return (
+        <Card className="overflow-hidden">
+            <div className="flex items-center justify-center overflow-visible px-8 py-10">
+                <EmptyState size="sm">
+                    <EmptyState.Header pattern="circle">
+                        <EmptyState.FeaturedIcon color="gray" theme="light" icon={Trophy01} />
+                    </EmptyState.Header>
+
+                    <EmptyState.Content className="mb-0">
+                        <EmptyState.Title>Nothing on the leaderboard</EmptyState.Title>
+                        <EmptyState.Description>No teams have joined the game.</EmptyState.Description>
+                    </EmptyState.Content>
+                </EmptyState>
+            </div>
+        </Card>
+    );
+};
+
+export const LeaderboardCard = ({ game }) => {
     const firstPlace = game.leaderboard[0];
 
     const getPulseDelay = (idx) => {
