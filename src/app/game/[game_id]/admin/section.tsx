@@ -1,6 +1,6 @@
 import { cx } from "@/utils/cx";
 
-export const SectionHeader = ({ title, text }) => {
+export const SectionHeader = ({ title, text, contentTrailing }: { title: string; text?: string; contentTrailing?: any }) => {
     return (
         <div className="flex flex-col gap-5 border-b border-none border-secondary pb-0">
             <div className="relative flex flex-col items-start gap-4 md:flex-row">
@@ -8,6 +8,9 @@ export const SectionHeader = ({ title, text }) => {
                     <h2 className="text-lg font-semibold text-primary">{title}</h2>
                     <p className="text-sm text-tertiary">{text}</p>
                 </div>
+
+                {contentTrailing}
+
                 {/* <div className="absolute top-0 right-0 md:static"> */}
                 {/*     <Dropdown.Root> */}
                 {/*         <Dropdown.DotsButton /> */}
@@ -28,6 +31,7 @@ export const SectionHeader = ({ title, text }) => {
         </div>
     );
 };
+
 export const Section = ({ className, children }) => {
     return (
         <div className={cx("mx-auto w-full max-w-container px-4 lg:px-8", className)}>

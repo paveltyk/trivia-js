@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Trash01 } from "@untitledui/icons";
+import { GamingPad01, Plus, Trash01 } from "@untitledui/icons";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
+import { SectionHeader } from "@/app/game/[game_id]/admin/section";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { Input } from "@/components/base/input/input";
+import { TextArea } from "@/components/base/textarea/textarea";
 
 type QuestionItemType = {
     id: string;
@@ -25,10 +27,10 @@ const QuizQuestionRow = ({ item, onAddItem, onRemoveItem }) => {
     }, [question, answer]);
 
     return (
-        <div className="mb-4 flex gap-4">
-            <Input placeholder="Type question here" size="md" value={question} onChange={setQuestion} />
+        <div className="flex gap-4">
+            <Input placeholder="Question" size="md" value={question} onChange={setQuestion} />
             <Input
-                placeholder="Type answer here"
+                placeholder="Answer"
                 size="md"
                 value={answer}
                 onChange={setAnswer}
@@ -59,11 +61,19 @@ const QuizQuestionRow = ({ item, onAddItem, onRemoveItem }) => {
 
 const QuizTable = ({ items, onAddItem, onRemoveItem }: { items: QuestionItemType[]; onAddItem: any; onRemoveItem: any }) => {
     return (
-        <>
+        <div className="flex flex-col gap-4">
             {items.map((item) => (
                 <QuizQuestionRow item={item} key={item.id} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />
             ))}
-        </>
+        </div>
+    );
+};
+
+const Separator = ({ children }) => {
+    return (
+        <div className="relative border-t border-secondary">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-secondary px-4">{children}</div>
+        </div>
     );
 };
 
@@ -71,7 +81,7 @@ const NewGamePage = () => {
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
 
     const router = useRouter();
-    const [items, setItems] = useState([{ id: "506c64a1-9a49-422d-bba6-55964d0e8c01", question: "", answer: "" }]);
+    const [items, setItems] = useState<any[]>([]);
 
     const onCreateGame = () => {
         const props = {
@@ -86,14 +96,16 @@ const NewGamePage = () => {
             .catch((err) => console.error("Error", err));
     };
 
-    const onAddItem = (item) => {
+    const addItem = (item) => {
         setItems((prevItems) => {
             const idx = prevItems.indexOf(item);
             const newItems = [...prevItems];
+            const newItem = { id: uuidv4(), question: "", answer: "" };
 
             if (idx !== -1) {
-                const newItem = { id: uuidv4(), question: "", answer: "" };
                 newItems.splice(idx + 1, 0, newItem);
+            } else {
+                newItems.push(newItem);
             }
 
             return newItems;
@@ -117,15 +129,76 @@ const NewGamePage = () => {
         });
     };
 
+    const [text, setText] = useState("");
+
+    const parseTextareaValue = (value) => {
+        const newItems = value
+            .split(/\r?\n/)
+            .map((row) => row.trim())
+            .filter((row) => row)
+            .map((row) => row.split("\t"))
+            .map(([q, a]) => {
+                return { id: uuidv4(), question: q, answer: a };
+            });
+        setItems(newItems);
+    };
+
+    const handleTextareaChange = (e) => {
+        const value = e.target.value;
+        parseTextareaValue(value);
+        setText(value);
+    };
+
+    const handleTextareaKeyDown = (e) => {
+        if (e.key === "Tab") {
+            e.preventDefault();
+
+            const textarea = e.target;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+
+            const value = textarea.value;
+            const newValue = value.substring(0, start) + "\t" + value.substring(end);
+
+            textarea.value = newValue;
+            textarea.selectionStart = textarea.selectionEnd = start + 1;
+        }
+    };
     return (
         <>
-            <div className="container mx-auto p-4">
-                <h1 className="mb-8 border-b-1 border-secondary pb-2 text-display-sm font-semibold text-primary">New game</h1>
-                <QuizTable items={items} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />
-                <div className="mt-8 border-t-1 border-secondary pt-4">
-                    <Button onClick={onCreateGame}>Create game</Button>
+            <main className="container mx-auto max-w-5xl pt-8 pb-16 lg:pt-12 lg:pb-24">
+                <div className="flex flex-col gap-6">
+                    <SectionHeader
+                        title="Host a new game"
+                        text="Drop your questions and answers below. Google Sheets works great too!"
+                        contentTrailing={
+                            <Button onClick={onCreateGame} color={items.length > 0 ? "primary" : "secondary"} size="lg" iconLeading={GamingPad01}>
+                                Create game
+                            </Button>
+                        }
+                    />
+                    <div className="flex flex-col gap-10">
+                        <div className="flex flex-col gap-10">
+                            <TextArea
+                                rows={10}
+                                onChange={handleTextareaChange}
+                                onKeyDown={handleTextareaKeyDown}
+                                placeholder="Paste content from Google Sheets or type your questions and answers here. Each line should contain one question and answer, separated by a Tab."
+                                aria-label="You can paste a two-column Google spreadsheet with questions and answers here."
+                            />
+                            {items.length > 0 && (
+                                <>
+                                    <Separator>Questions and Answers</Separator>
+                                    <QuizTable items={items} onAddItem={addItem} onRemoveItem={onRemoveItem} />
+                                    <Separator>
+                                        <Button color="secondary" iconLeading={Plus} onClick={addItem}></Button>
+                                    </Separator>
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </main>
         </>
     );
 };
