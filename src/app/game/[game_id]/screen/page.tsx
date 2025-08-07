@@ -7,11 +7,13 @@ import { Card } from "@/app/game/[game_id]/admin/card";
 import { LeaderboardCard, LeaderboardCardEmpty } from "@/app/game/[game_id]/admin/leaderboard-card";
 import { TeamAvatar, TeamsCard } from "@/app/game/[game_id]/admin/teams-card";
 import { QuestionBullet } from "@/app/game/[game_id]/question-screen";
+import GameSummaryScreen from "@/app/game/[game_id]/screen/game-summary-screen";
 import { Button } from "@/components/base/buttons/button";
 import { QRCode } from "@/components/shared-assets/qr-code";
 import useChannel from "@/hooks/use-channel";
 import type { GameType } from "@/hooks/use-channel";
-import { plural } from "@/my-components/utils";
+import { getQuestionIdx, plural } from "@/my-components/utils";
+import { cx } from "@/utils/cx";
 
 const JoinCard = ({ game }) => {
     const teams = game?.teams || [];
@@ -95,11 +97,13 @@ const JoinScreen = ({ game, gameId }) => {
 };
 
 const QuestionScreen = ({ game }) => {
+    const questionIdx = getQuestionIdx(game.questions, game.currentQuestion);
+
     return (
         <>
             <div className="m-auto flex h-dvh max-w-3xl flex-col">
                 <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
-                    <QuestionBullet number={1} className="mb-9" />
+                    <QuestionBullet number={questionIdx + 1} className="mb-9" />
                     <h1 className="mb-4 text-display-md font-semibold text-primary">{game.currentQuestion.question}</h1>
                 </div>
             </div>
@@ -110,12 +114,15 @@ const QuestionScreen = ({ game }) => {
 const LeaderboardScreen = ({ game }) => {
     return (
         <>
-            <div className="m-auto flex h-dvh max-w-3xl flex-col">
-                <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
-                    {game?.leaderboard.length > 0 && <LeaderboardCard game={game} />}
-                    {game?.leaderboard.length === 0 && <LeaderboardCardEmpty />}
+            {["initialized", "in_progress"].includes(game.summary.state) && <GameSummaryScreen game={game} />}
+            {game.summary.state === "complete" && (
+                <div className="m-auto flex h-dvh max-w-3xl flex-col">
+                    <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
+                        {game?.leaderboard.length > 0 && <LeaderboardCard game={game} />}
+                        {game?.leaderboard.length === 0 && <LeaderboardCardEmpty />}
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };

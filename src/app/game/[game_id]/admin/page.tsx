@@ -14,6 +14,7 @@ import { QRCode } from "@/components/shared-assets/qr-code";
 import useChannel from "@/hooks/use-channel";
 import type { GameType } from "@/hooks/use-channel";
 import { cx } from "@/utils/cx";
+import GameSummaryCard from "./game-summary-card";
 import { LeaderboardCard, LeaderboardCardEmpty } from "./leaderboard-card";
 import TeamsCard from "./teams-card";
 
@@ -167,12 +168,15 @@ const SectionRunGame = ({ game, className, onNext }: { game: any; className?: an
     );
 };
 
-const SectionLeaderboard = ({ game, className }: { game: any; className?: any }) => {
+const SectionLeaderboard = ({ game, channel, className }: { game: any; channel: any; className?: any }) => {
+    const showSummary = ["initialized", "in_progress"].includes(game?.summary.state);
+
     return (
         <Section className={className}>
             <SectionHeader title="Scoreboard" text="See who’s leading the game." />
-            {game?.leaderboard.length > 0 && <LeaderboardCard game={game} />}
-            {game?.leaderboard.length === 0 && <LeaderboardCardEmpty />}
+            {showSummary && <GameSummaryCard game={game} channel={channel} />}
+            {!showSummary && game?.leaderboard.length > 0 && <LeaderboardCard game={game} />}
+            {!showSummary && game?.leaderboard.length === 0 && <LeaderboardCardEmpty />}
         </Section>
     );
 };
@@ -232,7 +236,7 @@ const GameAdminPage = () => {
                 <SectionJoinGame url={lobbyUrl} />
                 <SectionStartGame game={game} onGameStart={startGame} />
                 {(gameStarted || gameOver) && <SectionRunGame game={game} onNext={nextQuestion} />}
-                {gameOver && <SectionLeaderboard game={game} />}
+                {gameOver && <SectionLeaderboard game={game} channel={channel} />}
                 {gameOver && <SectionGameOver />}
             </div>
         </main>

@@ -109,7 +109,7 @@ export const TeamsCard = ({ game, onGameStart }) => {
                     </Content.Content>
 
                     <Content.Footer className="flex-col text-center">
-                        <div className="pt-4">
+                        <div>
                             {!(gameStarted || gameOver) && (
                                 <Button size="md" iconLeading={GamingPad01} color={isEmpty ? "secondary" : "primary"} onClick={onGameStart}>
                                     Start game
@@ -140,6 +140,7 @@ TeamsCard.Content = Content;
 TeamsCard.Header = Content.Header;
 TeamsCard.FeaturedIcon = Content.FeaturedIcon;
 TeamsCard.Body = Content.Content;
+TeamsCard.Footer = Content.Footer;
 TeamsCard.Title = Content.Title;
 TeamsCard.Description = Content.Description;
 

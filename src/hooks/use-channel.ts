@@ -15,6 +15,7 @@ export type GameType = {
     teamGuesses: any;
     teams: string[];
     leaderboard: Array<LeaderboardRowType>;
+    summary: { state: "initialized" | "in_progress" | "complete"; currentQuestion: GameQuestionType };
 };
 
 export type LeaderboardType = Array<LeaderboardRowType>;
@@ -38,6 +39,7 @@ function useChannel({ room, params, onGameUpdated }: Props) {
         const leaderboard: LeaderboardType = payload.leaderboard.map((row) => {
             return { team: row.team, score: row.score };
         });
+
         const game: GameType = {
             state: payload.game.state,
             questions: payload.game.questions,
@@ -45,6 +47,7 @@ function useChannel({ room, params, onGameUpdated }: Props) {
             teamGuesses: payload.game.team_guesses,
             teams: payload.game.teams,
             leaderboard: leaderboard,
+            summary: { state: payload.summary.state, currentQuestion: payload.summary.current_question },
         };
         onGameUpdated && onGameUpdated(game);
     };
@@ -78,7 +81,6 @@ function useChannel({ room, params, onGameUpdated }: Props) {
         return () => {};
     }, []);
 
-    // TODO: Why is this?
     useEffect(() => {
         channel?.off("game_updated");
         channel?.on("game_updated", onGameUpdatedHanler);
