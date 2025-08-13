@@ -1,81 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { GamingPad01, Plus, Trash01 } from "@untitledui/icons";
+import { useEffect, useState } from "react";
+import { GamingPad01, Plus } from "@untitledui/icons";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { SectionHeader } from "@/app/game/[game_id]/admin/section";
+import { QuizTable } from "@/app/game/new/quiz-table";
+import { Separator } from "@/app/game/new/separator";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
-import { Dropdown } from "@/components/base/dropdown/dropdown";
-import { Input } from "@/components/base/input/input";
 import { TextArea } from "@/components/base/textarea/textarea";
-
-type QuestionItemType = {
-    id: string;
-    question: string;
-    answer: string;
-};
-
-const QuizQuestionRow = ({ item, onAddItem, onRemoveItem }) => {
-    const [question, setQuestion] = useState(item.question);
-    const [answer, setAnswer] = useState(item.answer);
-
-    useEffect(() => {
-        item.question = question;
-        item.answer = answer;
-    }, [question, answer]);
-
-    return (
-        <div className="flex gap-4">
-            <Input placeholder="Question" size="md" value={question} onChange={setQuestion} />
-            <Input
-                placeholder="Answer"
-                size="md"
-                value={answer}
-                onChange={setAnswer}
-                onKeyDown={({ code }) => {
-                    if (code === "Enter" && question && answer) {
-                        onAddItem(item);
-                    }
-                }}
-                className="w-100"
-            />
-            <Dropdown.Root>
-                <Dropdown.DotsButton />
-
-                <Dropdown.Popover className="w-min">
-                    <Dropdown.Menu>
-                        <Dropdown.Item icon={Plus} onAction={() => onAddItem(item)}>
-                            <span className="pr-4">Add question</span>
-                        </Dropdown.Item>
-                        <Dropdown.Item icon={Trash01} onAction={() => onRemoveItem(item)}>
-                            <span className="pr-4">Delete question</span>
-                        </Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown.Popover>
-            </Dropdown.Root>
-        </div>
-    );
-};
-
-const QuizTable = ({ items, onAddItem, onRemoveItem }: { items: QuestionItemType[]; onAddItem: any; onRemoveItem: any }) => {
-    return (
-        <div className="flex flex-col gap-4">
-            {items.map((item) => (
-                <QuizQuestionRow item={item} key={item.id} onAddItem={onAddItem} onRemoveItem={onRemoveItem} />
-            ))}
-        </div>
-    );
-};
-
-const Separator = ({ children }) => {
-    return (
-        <div className="relative border-t border-secondary">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-secondary px-4">{children}</div>
-        </div>
-    );
-};
 
 const NewGamePage = () => {
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}`;

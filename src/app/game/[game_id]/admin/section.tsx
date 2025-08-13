@@ -3,7 +3,7 @@ import { cx } from "@/utils/cx";
 export const SectionHeader = ({ title, text, contentTrailing }: { title: string; text?: string; contentTrailing?: any }) => {
     return (
         <div className="flex flex-col gap-5 border-b border-none border-secondary pb-0">
-            <div className="relative flex flex-col items-start gap-4 md:flex-row">
+            <div className="relative flex flex-col items-start gap-10 md:flex-row">
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 self-stretch">
                     <h2 className="text-lg font-semibold text-primary">{title}</h2>
                     <p className="text-sm text-tertiary">{text}</p>
