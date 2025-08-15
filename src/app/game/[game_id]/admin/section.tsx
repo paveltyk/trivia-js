@@ -1,6 +1,7 @@
+import { ReactNode } from "react";
 import { cx } from "@/utils/cx";
 
-export const SectionHeader = ({ title, text, contentTrailing }: { title: string; text?: string; contentTrailing?: any }) => {
+export const SectionHeader = ({ title, text, contentTrailing }: { title: string | ReactNode; text?: string; contentTrailing?: any }) => {
     return (
         <div className="flex flex-col gap-5 border-b border-none border-secondary pb-0">
             <div className="relative flex flex-col items-start gap-10 md:flex-row">

@@ -22,6 +22,24 @@ const LoadingResponse = () => {
         </div>
     );
 };
+
+const KnowledgeCutoffTooltip = () => {
+    return (
+        <Tooltip
+            placement="bottom right"
+            title={
+                <span className="flex gap-1">
+                    <Star06 className="size-4" /> AI restrictions
+                </span>
+            }
+            description="Only trivia related context. Jun 01, 2024 knowledge cutoff."
+        >
+            <TooltipTrigger className="group relative flex flex-col items-center gap-2 text-fg-quaternary transition duration-100 ease-linear hover:text-fg-quaternary_hover focus:text-fg-quaternary_hover">
+                <InfoCircle className="size-4" />
+            </TooltipTrigger>
+        </Tooltip>
+    );
+};
 const Page = () => {
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
     const router = useRouter();
@@ -122,7 +140,12 @@ const Page = () => {
         <main className="container mx-auto max-w-5xl pt-8 pb-16 lg:pt-12 lg:pb-24">
             <div className="flex flex-col gap-6">
                 <SectionHeader
-                    title="Use AI magic to build your next trivia game"
+                    title={
+                        <span className="flex items-center gap-2">
+                            <span>Use AI magic to build your next trivia game</span>
+                            <KnowledgeCutoffTooltip />
+                        </span>
+                    }
                     text="Start by giving a short description of your trivia round, then customize it further with specific details."
                     contentTrailing={
                         <Button onClick={onCreateGame} color={items.length > 0 ? "primary" : "secondary"} size="lg" iconLeading={GamingPad01}>
