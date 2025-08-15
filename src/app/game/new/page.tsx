@@ -1,140 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { GamingPad01, Plus } from "@untitledui/icons";
+import "react";
+import { File02, Star06 } from "@untitledui/icons";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { v4 as uuidv4 } from "uuid";
-import { SectionHeader } from "@/app/game/[game_id]/admin/section";
-import { QuizTable } from "@/app/game/new/quiz-table";
-import { Separator } from "@/app/game/new/separator";
-import { Button } from "@/components/base/buttons/button";
-import { ButtonUtility } from "@/components/base/buttons/button-utility";
-import { TextArea } from "@/components/base/textarea/textarea";
+import { PricingTierCardIcon } from "@/components/marketing/pricing-sections/base-components/pricing-tier-card";
 
-const NewGamePage = () => {
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
-
+const Page = () => {
     const router = useRouter();
-    const [items, setItems] = useState<any[]>([]);
 
-    const onCreateGame = () => {
-        const props = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ questions: items }),
-        };
+    const plans = [
+        {
+            title: "Manual input",
+            description: "Write or paste your own questions",
+            features: ["Import from Google Sheets", "Copy/paste from any CSV or Excel", "Manually type Q&A", "Full flexibility over wording"],
+            icon: File02,
+            ctaText: "Start with Manual",
+            onCtaClick: () => {
+                router.push("/game/new/manual");
+            },
+        },
+        {
+            title: "AI-Generated",
+            description: "Use AI to instantly generate questions",
+            features: ["Just type a theme or idea", "Fast and automatic", "Easily edit or fine-tune", "Great for inspiration"],
+            icon: Star06,
+            ctaText: "Generate with AI",
+            onCtaClick: () => {
+                router.push("/game/new/ai");
+            },
+        },
+    ];
 
-        fetch(`${apiUrl}/game`, props)
-            .then((res) => res.json())
-            .then(({ game_id }) => router.push(`/game/${game_id}/admin`))
-            .catch((err) => console.error("Error", err));
-    };
-
-    const addItem = (item) => {
-        setItems((prevItems) => {
-            const idx = prevItems.indexOf(item);
-            const newItems = [...prevItems];
-            const newItem = { id: uuidv4(), question: "", answer: "" };
-
-            if (idx !== -1) {
-                newItems.splice(idx + 1, 0, newItem);
-            } else {
-                newItems.push(newItem);
-            }
-
-            return newItems;
-        });
-    };
-
-    const onRemoveItem = (item) => {
-        setItems((prevItems) => {
-            const idx = prevItems.indexOf(item);
-            const newItems = [...prevItems];
-
-            if (idx !== -1) {
-                newItems.splice(idx, 1);
-            }
-
-            if (newItems.length > 0) {
-                return newItems;
-            } else {
-                return [{ id: crypto.randomUUID(), question: "", answer: "" }];
-            }
-        });
-    };
-
-    const [text, setText] = useState("");
-
-    const parseTextareaValue = (value) => {
-        const newItems = value
-            .split(/\r?\n/)
-            .map((row) => row.trim())
-            .filter((row) => row)
-            .map((row) => row.split("\t"))
-            .map(([q, a]) => {
-                return { id: uuidv4(), question: q, answer: a };
-            });
-        setItems(newItems);
-    };
-
-    const handleTextareaChange = (e) => {
-        const value = e.target.value;
-        parseTextareaValue(value);
-        setText(value);
-    };
-
-    const handleTextareaKeyDown = (e) => {
-        if (e.key === "Tab") {
-            e.preventDefault();
-
-            const textarea = e.target;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-
-            const value = textarea.value;
-            const newValue = value.substring(0, start) + "\t" + value.substring(end);
-
-            textarea.value = newValue;
-            textarea.selectionStart = textarea.selectionEnd = start + 1;
-        }
-    };
     return (
-        <>
-            <main className="container mx-auto max-w-5xl pt-8 pb-16 lg:pt-12 lg:pb-24">
-                <div className="flex flex-col gap-6">
-                    <SectionHeader
-                        title="Host a new game"
-                        text="Drop your questions and answers below. Google Sheets works great too!"
-                        contentTrailing={
-                            <Button onClick={onCreateGame} color={items.length > 0 ? "primary" : "secondary"} size="lg" iconLeading={GamingPad01}>
-                                Create game
-                            </Button>
-                        }
-                    />
-                    <div className="flex flex-col gap-10">
-                        <div className="flex flex-col gap-10">
-                            <TextArea
-                                rows={10}
-                                onChange={handleTextareaChange}
-                                onKeyDown={handleTextareaKeyDown}
-                                placeholder="Paste content from Google Sheets or type your questions and answers here. Each line should contain one question and answer, separated by a Tab."
-                                aria-label="You can paste a two-column Google spreadsheet with questions and answers here."
-                            />
-                            {items.length > 0 && (
-                                <>
-                                    <Separator>Questions and Answers</Separator>
-                                    <QuizTable items={items} onAddItem={addItem} onRemoveItem={onRemoveItem} />
-                                    <Separator>
-                                        <Button color="secondary" iconLeading={Plus} onClick={addItem}></Button>
-                                    </Separator>
-                                </>
-                            )}
-                        </div>
-                    </div>
+        <section className="bg-primary py-16 text-center md:py-24">
+            <div className="mx-auto max-w-container px-4 md:px-8">
+                <div className="mx-auto flex w-full max-w-3xl flex-col">
+                    <p className="text-sm font-semibold text-brand-secondary md:text-md">New game</p>
+                    <h2 className="mt-3 text-display-md font-semibold text-primary md:text-display-lg">How would you like to add questions to your game?</h2>
+                    <p className="mt-4 text-lg text-tertiary md:mt-6 md:text-xl">
+                        Whether you prefer to write your own or get a boost from AI, we’ve got you covered.
+                    </p>
                 </div>
-            </main>
-        </>
+
+                <div className="mt-16 flex w-full justify-center gap-4 md:mt-24 md:gap-8">
+                    {plans.map((plan) => (
+                        <PricingTierCardIcon key={plan.title} {...plan} className="max-w-lg min-w-md" />
+                    ))}
+                </div>
+            </div>
+        </section>
     );
 };
 
-export default NewGamePage;
+export default Page;

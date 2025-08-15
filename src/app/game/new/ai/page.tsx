@@ -5,8 +5,8 @@ import { CornerDownLeft, GamingPad01, InfoCircle, Plus, Star06, User01 } from "@
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { SectionHeader } from "@/app/game/[game_id]/admin/section";
-import { QuizTable } from "@/app/game/new/quiz-table";
-import { Separator } from "@/app/game/new/separator";
+import { QuizTable } from "@/app/game/new/shared/quiz-table";
+import { Separator } from "@/app/game/new/shared/separator";
 import { Button } from "@/components/base/buttons/button";
 import { InputBase } from "@/components/base/input/input";
 import { InputGroup } from "@/components/base/input/input-group";

@@ -19,7 +19,7 @@
         "qr-code-styling": "^1.9.2",
         "react": "19.0.0",
         "react-aria": "^3.41.1",
-        "react-aria-components": "^1.10.1",
+        "react-aria-components": "^1.11.0",
         "react-dom": "19.0.0",
         "react-hotkeys-hook": "^4.6.2",
         "tailwind-merge": "^3.3.1",
