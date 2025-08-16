@@ -190,6 +190,34 @@ export const PricingTierCardIconOffset = (props: PricingTierCardProps) => {
     );
 };
 
+export const MyPricingTierCardIconOffset = (props: PricingTierCardProps) => {
+    return (
+        <div className={cx("relative flex flex-col rounded-2xl bg-primary shadow-lg ring-1 ring-secondary_alt", props.className)}>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <FeaturedIcon icon={props.icon} color="gray" theme="modern" size="lg" />
+            </div>
+
+            <div className="mb-6 flex flex-col items-center px-6 pt-12 text-center md:px-8">
+                <h2 className="text-xl font-semibold text-primary">{props.title}</h2>
+                <p className="mt-2 text-display-md font-semibold text-primary md:text-display-lg">{props.subtitle}</p>
+                <p className="mt-2 text-md text-tertiary">{props.description}</p>
+            </div>
+
+            <div className="mt-auto flex flex-col gap-3 px-6 pb-8 md:px-8">
+                <Button size="xl" onClick={props.onCtaClick}>
+                    {props.ctaText || "Get started"}
+                </Button>
+            </div>
+
+            <ul className="flex flex-col gap-4 rounded-b-2xl border-t border-secondary bg-secondary px-6 py-8 md:px-8 md:pt-8 md:pb-10">
+                {props.features.map((feat) => (
+                    <CheckItemText key={feat} text={feat} iconStyle="outlined" />
+                ))}
+            </ul>
+        </div>
+    );
+};
+
 export const PricingTierCardDualCheckItems = (props: {
     title: string;
     description?: string;

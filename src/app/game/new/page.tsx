@@ -4,14 +4,14 @@ import "react";
 import { File02, Star06 } from "@untitledui/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PricingTierCardIcon } from "@/components/marketing/pricing-sections/base-components/pricing-tier-card";
+import { MyPricingTierCardIconOffset } from "@/components/marketing/pricing-sections/base-components/pricing-tier-card";
 
 const Page = () => {
     const router = useRouter();
 
     const plans = [
         {
-            title: "Manual input",
+            title: "Manual Input",
             description: "Write or paste your own questions",
             features: ["Import from Google Sheets", "Copy/paste from any CSV or Excel", "Manually type Q&A", "Full flexibility over wording"],
             icon: File02,
@@ -45,7 +45,7 @@ const Page = () => {
 
                 <div className="mt-16 flex w-full justify-center gap-4 md:mt-24 md:gap-8">
                     {plans.map((plan) => (
-                        <PricingTierCardIcon key={plan.title} {...plan} className="max-w-lg min-w-md" />
+                        <MyPricingTierCardIconOffset key={plan.title} {...plan} className="max-w-lg min-w-md" />
                     ))}
                 </div>
             </div>
