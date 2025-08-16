@@ -74,7 +74,7 @@ export const GameSummaryInProgress = ({ game }) => {
                         </h2>
                     </div>
                 </div>
-                <div className="bg-white">
+                <div className="bg-white dark:bg-gray-950">
                     <div className="m-auto flex h-dvh max-w-xl flex-col">
                         <div className="flex min-h-0 flex-1 flex-col justify-center px-4 md:px-8">
                             {teamGuesses.map(({ team, guess }, rowIdx) => (
