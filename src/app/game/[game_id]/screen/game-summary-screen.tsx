@@ -140,7 +140,6 @@ export const GameSummaryInitializedCard = ({ size: cardSize }: { size?: "sm" | "
         description: size === "lg" ? "text-lg" : "text-md",
         outerDiv: size === "lg" ? "px-8 py-20" : "px-2 py-10",
     };
-    console.log(styles, size, cardSize);
 
     return (
         <Card className="overflow-hidden">
