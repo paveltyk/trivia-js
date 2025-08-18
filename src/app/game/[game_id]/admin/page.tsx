@@ -4,11 +4,13 @@
 import { useEffect, useState } from "react";
 import { ArrowDown, Check, DotsHorizontal, Plus, XClose } from "@untitledui/icons";
 import { useParams, useRouter } from "next/navigation";
+import { Button as AriaButton } from "react-aria-components";
 import { Card } from "@/app/game/[game_id]/admin/card";
 import { Section, SectionHeader } from "@/app/game/[game_id]/admin/section";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { BadgeWithIcon } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
+import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { BackgroundPattern } from "@/components/shared-assets/background-patterns";
 import { QRCode } from "@/components/shared-assets/qr-code";
 import useChannel from "@/hooks/use-channel";
@@ -46,7 +48,7 @@ const ActiveIndicator = ({ isActive }) => {
     );
 };
 
-const TeamGuessBadge = ({ team, guess }) => {
+const TeamGuessBadge = ({ team, guess, onGuessChange }) => {
     const badgeColors = {
         true: "success",
         false: "error",
@@ -61,23 +63,51 @@ const TeamGuessBadge = ({ team, guess }) => {
     const icon = badgeIcons[guess?.hit];
 
     return (
-        <BadgeWithIcon size="lg" type="color" color={color} iconLeading={guess?.["answer"] ? icon : DotsHorizontal} className="font-normal">
-            {team}
-            {guess?.["answer"] && <span className="font-semibold"> - {guess?.["answer"]}</span>}
-        </BadgeWithIcon>
+        <Dropdown.Root>
+            <AriaButton
+                isDisabled={!guess}
+                className={({ isPressed, isFocusVisible }) =>
+                    cx("group relative inline-flex cursor-pointer rounded-lg outline-focus-ring", (isPressed || isFocusVisible) && "outline-2 outline-offset-2")
+                }
+            >
+                <BadgeWithIcon size="lg" type="color" color={color} iconLeading={guess?.["answer"] ? icon : DotsHorizontal} className="font-normal">
+                    {team}
+                    {guess?.["answer"] && <span className="font-semibold"> - {guess?.["answer"]}</span>}
+                </BadgeWithIcon>
+            </AriaButton>
+
+            <Dropdown.Popover className="w-min">
+                <Dropdown.Menu>
+                    {guess && !guess.hit && (
+                        <Dropdown.Item icon={Check} onAction={() => onGuessChange({ team, guess: { ...guess, hit: true } })}>
+                            <span className="pr-4 text-success-600">Mark as correct</span>
+                        </Dropdown.Item>
+                    )}
+                    {guess && guess.hit && (
+                        <Dropdown.Item icon={XClose} onAction={() => onGuessChange({ team, guess: { ...guess, hit: false } })}>
+                            <span className="pr-4 text-error-600">Mark as incorrect</span>
+                        </Dropdown.Item>
+                    )}
+                </Dropdown.Menu>
+            </Dropdown.Popover>
+        </Dropdown.Root>
     );
 };
 
-const TeamGuesses = ({ teamGuesses, teams, item }) => {
+const TeamGuesses = ({ teamGuesses, teams, item, onGuessChange }) => {
+    const handleGuessChange = (attrs) => {
+        onGuessChange({ ...attrs, question: item });
+    };
+
     return (
         <>
             {teams.map((team) => {
-                return <TeamGuessBadge key={team} team={team} guess={teamGuesses[team]?.[item.id]} />;
+                return <TeamGuessBadge key={team} team={team} guess={teamGuesses[team]?.[item.id]} onGuessChange={handleGuessChange} />;
             })}
         </>
     );
 };
-const QuizCard = ({ game, onNext }) => {
+const QuizCard = ({ game, onNext, onGuessChange }) => {
     const items = game.questions;
     const allTeamsAnswered = Object.entries(game.teamGuesses)
         .map(([team, value]: [any, any]) => !!value[game.currentQuestion?.id])
@@ -111,7 +141,7 @@ const QuizCard = ({ game, onNext }) => {
                                     </div>
                                     {game.teams.length > 0 && (
                                         <div className="flex flex-row flex-wrap gap-2">
-                                            <TeamGuesses teamGuesses={game.teamGuesses} teams={game.teams} item={item} />
+                                            <TeamGuesses teamGuesses={game.teamGuesses} teams={game.teams} item={item} onGuessChange={onGuessChange} />
                                         </div>
                                     )}
                                     {isCurrentQuestion && (
@@ -159,11 +189,11 @@ const SectionStartGame = ({ game, className, onGameStart }: { game: any; classNa
     );
 };
 
-const SectionRunGame = ({ game, className, onNext }: { game: any; className?: any; onNext: any }) => {
+const SectionRunGame = ({ game, className, onNext, onGuessChange }: { game: any; className?: any; onNext: any; onGuessChange: any }) => {
     return (
         <Section className={className}>
             <SectionHeader title="Run the game" text="Run the game, move to the next question, and see who has answered correctly." />
-            <QuizCard game={game} onNext={onNext} />
+            <QuizCard game={game} onNext={onNext} onGuessChange={onGuessChange} />
         </Section>
     );
 };
@@ -224,6 +254,10 @@ const GameAdminPage = () => {
         channel.push("next_question", {});
     };
 
+    const onGuessChange = (attrs) => {
+        channel.push("toggle_team_guess", attrs);
+    };
+
     const screenUrl = `${origin}/game/${params.game_id}/screen`;
     const lobbyUrl = `${origin}/game/${params.game_id}/lobby`;
     const gameStarted = game?.state === "game_started";
@@ -235,7 +269,7 @@ const GameAdminPage = () => {
                 <SectionBigScreen url={screenUrl} />
                 <SectionJoinGame url={lobbyUrl} />
                 <SectionStartGame game={game} onGameStart={startGame} />
-                {(gameStarted || gameOver) && <SectionRunGame game={game} onNext={nextQuestion} />}
+                {(gameStarted || gameOver) && <SectionRunGame game={game} onNext={nextQuestion} onGuessChange={onGuessChange} />}
                 {gameOver && <SectionLeaderboard game={game} channel={channel} />}
                 {gameOver && <SectionGameOver />}
             </div>
