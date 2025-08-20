@@ -148,7 +148,7 @@ const Page = () => {
                     }
                     text="Start by giving a short description of your trivia round, then customize it further with specific details."
                     contentTrailing={
-                        <Button onClick={onCreateGame} color={items.length > 0 ? "primary" : "secondary"} size="lg" iconLeading={GamingPad01}>
+                        <Button onClick={onCreateGame} color={items?.length > 0 ? "primary" : "secondary"} size="lg" iconLeading={GamingPad01}>
                             Create game
                         </Button>
                     }
