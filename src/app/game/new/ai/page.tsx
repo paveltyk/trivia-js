@@ -94,6 +94,14 @@ const Page = () => {
         });
     };
 
+    const decodeOpenAIResponse = (response) => {
+        if (!response.ok) {
+            replyConversation("Whoops! The AI’s still learning its trivia chops. Our robot got stuck thinking too hard. Give it another go?", true);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    };
+
     const handleOpenAIResponse = (response) => {
         setItems(response.items);
         setLastResponse(response);
@@ -106,11 +114,11 @@ const Page = () => {
         });
     };
 
-    const replyConversation = (response) => {
+    const replyConversation = (response, hasError = false) => {
         setConversation((prev) => {
             const dup = [...prev];
             const last = dup.pop();
-            return [...dup, { ...last, response }];
+            return [...dup, { ...last, response, hasError }];
         });
     };
 
@@ -131,7 +139,7 @@ const Page = () => {
         };
 
         fetch(`${apiUrl}/openai`, props)
-            .then((res) => res.json())
+            .then(decodeOpenAIResponse)
             .then(handleOpenAIResponse)
             .catch((err) => console.error("Error", err));
     };
@@ -179,13 +187,13 @@ const Page = () => {
                                     />
                                 </InputGroup>
                             </form>
-                            {conversation.slice(-1).map(({ id, prompt, response }) => {
+                            {conversation.slice(-1).map(({ id, prompt, response, hasError }) => {
                                 return (
                                     <blockquote
                                         key={id}
                                         className={cx(
                                             "relative flex flex-col gap-2 rounded-lg bg-primary px-3 py-2 text-md ring-1 ring-secondary ring-inset before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:border-l-[3px]",
-                                            response ? "before:border-brand" : "text-tertiary before:border-gray-300",
+                                            !response ? "text-tertiary before:border-gray-300" : hasError ? "before:border-error-500" : "before:border-brand",
                                         )}
                                     >
                                         <div className="flex w-full gap-1.5 text-tertiary">
@@ -210,7 +218,12 @@ const Page = () => {
                                             )}
                                         </div>
                                         <div className="flex gap-1.5">
-                                            <Star06 className={cx("mt-1.5 size-3 flex-none", response ? "stroke-brand-600" : "stroke-gray-600")} />
+                                            <Star06
+                                                className={cx(
+                                                    "mt-1.5 size-3 flex-none",
+                                                    !response ? "stroke-gray-600" : hasError ? "stroke-error-600" : "stroke-brand-600",
+                                                )}
+                                            />
                                             {response && <span>{response}</span>}
                                             {!response && <LoadingResponse />}
                                         </div>
