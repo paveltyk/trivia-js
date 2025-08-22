@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import LogRocketProvider from "@/providers/logrocket-provider";
@@ -28,6 +29,8 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={cx(inter.variable, "bg-secondary antialiased")}>
@@ -36,6 +39,7 @@ export default function RootLayout({
                     <Theme>{children}</Theme>
                 </RouteProvider>
             </body>
+            {gaId && <GoogleAnalytics gaId={gaId} />}
         </html>
     );
 }

@@ -8,6 +8,7 @@
         "start": "next start"
     },
     "dependencies": {
+        "@next/third-parties": "^15.5.0",
         "@tailwindcss/postcss": "^4.1.11",
         "@tailwindcss/typography": "^0.5.16",
         "@untitledui/file-icons": "^0.0.7",
