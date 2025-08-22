@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import LogRocketProvider from "@/providers/logrocket-provider";
 import { RouteProvider } from "@/providers/router-provider";
 import { Theme } from "@/providers/theme";
 import "@/styles/globals.css";
@@ -30,6 +31,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={cx(inter.variable, "bg-secondary antialiased")}>
+                <LogRocketProvider />
                 <RouteProvider>
                     <Theme>{children}</Theme>
                 </RouteProvider>
